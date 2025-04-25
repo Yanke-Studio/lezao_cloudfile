@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="bg-gray-200 font-sans"> <!-- 修改页面背景颜色 -->
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-2">Lz's Studio</h1>
+        <h1 class="text-3xl font-bold mb-4">乐造文件云</h1>
+        <h2 class="text-xl mb-2">欢迎，{{ username }}</h2>
+        {% if is_admin %}
+            <h5 class="text-yellow-500 mb-4">你现在是管理员！</h5>
+            <a href="{{ url_for('admin') }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2">管理后台</a>
+        {% endif %}
+        <a href="{{ url_for('messages_page') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2">消息中心</a>
+        <a href="{{ url_for('upload') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">上传文件</a>
+        <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">退出登录</a>
+
+        {% if global_reminders %}
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 my-4">
+                <p class="font-bold">全站提醒</p>
+                <ul>
+                    {% for reminder in global_reminders %}
+                        <li>{{ reminder }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for file in files %}
+            <div class="file-card bg-gray-800 rounded-lg shadow-md p-4 text-white"> <!-- 修改文件列表背景颜色和文字颜色 -->
+                <div class="file-info">
+                    <h2 class="text-xl font-bold mb-2">{{ file.filename }}</h2>
+                    <div class="file-meta flex flex-wrap -mx-2">
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="far fa-calendar-alt mr-1 text-white"></i>
+                            <span>上传时间：{{ file.created }}</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-download mr-1 text-white"></i>
+                            <span>下载次数：{{ file.download_count }}</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-file-alt mr-1 text-white"></i>
+                            <span>文件大小：{{ file.size }} MB</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-user mr-1 text-white"></i>
+                            <span>上传者：{{ file.uploader }}</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-check-circle mr-1 text-white"></i>
+                            <span>审核状态：{{ file.status }}</span>
+                        </div>
+                    </div>
+                    {% if file.status == '通过' %}
+                        {% if file.filename.lower().endswith(('.html', '.jpg', '.jpeg', '.png', '.gif')) %}
+                            <a href="{{ url_for('download', filename=file.filename) }}" class="download-link bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded block mt-4 text-center">
+                                <i class="fas fa-eye mr-1"></i> 立即预览
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('download', filename=file.filename) }}" class="download-link bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded block mt-4 text-center">
+                                <i class="fas fa-cloud-download-alt mr-1"></i> 立即下载
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-gray-300 block mt-4 text-center">未通过审核</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </main>
+    </div>
+    <footer class="bg-gray-800 text-white text-center py-2 mt-4">
+        <p>&copy; 2024-2025 Lz's Studio 乐造文件云 保留所有权利.</p>
+    </footer>
+</body>
+</html>    

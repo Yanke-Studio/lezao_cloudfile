@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body class="bg-gray-200 font-sans">
+    <div class="container mx-auto p-4">
+        <h2 class="text-xl mb-2">欢迎，{{ username }}</h2>
+        <a href="{{ url_for('messages_page') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2">消息中心</a>
+        <a href="http://120.77.10.149:5000/admin/logs" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mr-2">日志系统（请不要泄露！）</a>
+        <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">退出登录</a>
+
+        <form method="post" action="{{ url_for('send_global_reminder') }}" class="mt-4">
+            <input type="text" name="reminder" placeholder="输入全站提醒内容" class="border border-gray-300 p-2 rounded mr-2">
+            <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">发送全站提醒</button>
+        </form>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            {% for reminder in global_reminders %}
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md">
+                <p>{{ reminder }}</p>
+            </div>
+            {% endfor %}
+
+            {% for file in files %}
+            <div class="file-card bg-gray-800 rounded-lg shadow-md p-4 text-white">
+                <div class="file-info">
+                    <h2 class="text-xl font-bold mb-2">{{ file.filename }}</h2>
+                    <div class="file-meta flex flex-wrap -mx-2">
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="far fa-calendar-alt mr-1 text-white"></i>
+                            <span>上传时间：{{ file.created }}</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-download mr-1 text-white"></i>
+                            <span>下载次数：{{ file.download_count }}</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-file-alt mr-1 text-white"></i>
+                            <span>文件大小：{{ file.size }} MB</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-user mr-1 text-white"></i>
+                            <span>上传者：{{ file.uploader }}</span>
+                        </div>
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-check-circle mr-1 text-white"></i>
+                            <span>审核状态：{{ file.status }}</span>
+                        </div>
+                        {% if file.reason %}
+                        <div class="meta-item w-full md:w-1/2 px-2 mb-2">
+                            <i class="fas fa-info-circle mr-1 text-white"></i>
+                            <span>不通过理由：{{ file.reason }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('download', filename=file.filename) }}" class="download-link bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded block mt-4 text-center">
+                        <i class="fas fa-download mr-1"></i> 下载文件
+                    </a>
+                    {% if file.status == '待审核' %}
+                    <div class="flex justify-between mt-4">
+                        <form method="post" action="{{ url_for('review_file', filename=file.filename, status='通过') }}">
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">通过</button>
+                        </form>
+                        <form method="post" action="{{ url_for('review_file', filename=file.filename, status='不通过') }}">
+                            <input type="text" name="reason" placeholder="不通过理由" class="border border-gray-300 p-2 rounded mr-2">
+                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">不通过</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </main>
+    </div>
+    <footer class="bg-gray-800 text-white text-center py-2 mt-4">
+        <p>&copy; 2024-2025 Lz's Studio 乐造文件云. 保留所有权利.</p>
+    </footer>
+</body>
+
+</html>    

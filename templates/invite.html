@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>输入邀请码</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="bg-gray-200 font-sans">
+    <div class="container mx-auto p-4 flex justify-center items-center min-h-screen">
+        <div class="bg-gray-800 rounded-lg shadow-md p-8 text-white w-full max-w-md">
+            <h1 class="text-3xl font-bold mb-2 text-cyan-400 text-center">Lz's Studio</h1>
+            <h1 class="text-3xl font-bold mb-4 text-cyan-400 text-center">乐造文件云</h1>
+            <h2 class="text-xl mb-2 text-center">请输入邀请码</h2>
+            <h5 class="text-cyan-400 text-center mb-4">本服务需要内部邀请码 一人一码实名制</h5>
+            {% if error %}
+            <p class="text-red-500 mb-4">{{ error }}</p>
+            {% endif %}
+            <form method="post">
+                <input type="text" name="invite_code" placeholder="邀请码" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md mb-4 text-white">
+                <button type="submit" class="w-full p-3 bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-bold rounded-md">提交</button>
+            </form>
+        </div>
+    </div>
+    <footer class="bg-gray-800 text-white text-center py-2">
+        <p>&copy; 2024-2025 Lz's Studio 乐造文件云. 保留所有权利.</p>
+    </footer>
+</body>
+</html>    
